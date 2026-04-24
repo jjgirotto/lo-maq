@@ -74,7 +74,17 @@ class EquipamentoController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $equipamento = Equipamento::findOrFail($id);
+        $categorias = Categoria::all();
+        $locador = User::all();
+
+        $layout = (auth()->user()->access === 'ADM') ? 'layouts.admin' : 'layouts.default';
+
+        if (auth()->user()->access !== 'ADM') {
+            $locador = User::where('id', auth()->id())->get();
+        }
+
+        return view("equipamentos.edit", compact("equipamento", "categorias", "locador"))->with('layout', $layout);
     }
 
     /**
@@ -82,7 +92,27 @@ class EquipamentoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $equipamento = Equipamento::findOrFail($id);
+            $data = $request->all();
+
+            if ($request->hasFile('foto')) {
+                $path = $request->file('foto')->store('equipamentos', 'public');
+                $data['image_path'] = $path;
+            }
+
+            $equipamento->update($data);
+
+            return redirect()->route("equipamentos.index")
+                ->with("sucesso", "Registro alterado!");
+        } catch (\Exception $e) {
+            Log::error("Erro ao alterar o registro do equipamento! " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            return redirect()->route("equipamentos.index")
+                ->with("erro", "Erro ao alterar!");
+        }
     }
 
     /**
