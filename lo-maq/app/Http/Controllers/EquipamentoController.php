@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Models\Equipamento;
+use App\Models\Categoria;
+use App\Models\User;
 
 class EquipamentoController extends Controller
 {
@@ -19,7 +23,16 @@ class EquipamentoController extends Controller
      */
     public function create()
     {
-        //
+        $categorias = Categoria::all();
+        $locador = User::all();
+
+        if (auth()->user()->access !== 'ADM') {
+            $locador = User::where('id', auth()->id())->get();
+        }
+
+        $layout = (auth()->user()->access === 'ADM') ? 'layouts.admin' : 'layouts.default';
+
+        return view("equipamentos.create", compact('categorias', 'locador'))->with('layout', $layout);
     }
 
     /**
@@ -27,7 +40,25 @@ class EquipamentoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $data = $request->all();
+
+            if ($request->hasFile('foto')) {
+                $path = $request->file('foto')->store('equipamentos', 'public');
+                $data['image_path'] = $path;
+            }
+
+            Equipamento::create($data);
+            return redirect()->route("equipamentos.index")
+                ->with("sucesso", "Registro inserido!");
+        } catch (\Exception $e) {
+            Log::error("Erro ao salvar o registro do equipamento! " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            return redirect()->route("equipamentos.index")
+                ->with("erro", "Erro ao inserir!" . $e->getMessage());
+        }
     }
 
     /**
