@@ -20,8 +20,8 @@ return new class extends Migration
             $table->decimal('valor_total', 10, 2)->nullable();
             $table->string('status_pagamento', 50)->nullable();
     
-            $table->foreignId('usuario_id')->constrained('usuarios');
-            $table->foreignId('equipamento_id')->constrained('equipamentos');
+            $table->foreignId('usuario_id')->constrained('users');
+            $table->foreignId('equipamento_id')->constrained('equipamento');
             $table->timestamps();
         });
     }

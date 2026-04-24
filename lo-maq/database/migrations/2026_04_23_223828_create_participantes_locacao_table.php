@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('status_pagamento', 50)->nullable();
     
             $table->foreignId('locacao_id')->constrained('locacoes');
-            $table->foreignId('usuario_id')->constrained('usuarios');
+            $table->foreignId('usuario_id')->constrained('users');
             $table->timestamps();
         });
     }
