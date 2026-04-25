@@ -13,10 +13,17 @@ class EquipamentoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $query = Equipamento::query();
+        $categorias = Categoria::all();
+        $layout = 'layouts.default'; // Layout padrão para usuários não logados
+        $locador = User::all();
+
+        if (auth()->check()) {
+            $layout = (auth()->user()->access === 'ADM') ? 'layouts.admin' : 'layouts.default';
+        }
+
 
     /**
      * Show the form for creating a new resource.
@@ -67,6 +74,12 @@ class EquipamentoController extends Controller
     public function show(string $id)
     {
         //
+        $equipamento = Equipamento::findOrFail($id);
+        $categoria = Categoria::findOrFail($equipamento->categoria_id);
+        $locador = User::findOrFail($equipamento->locador_id);
+        $layout = (auth()->user()->access === 'ADM') ? 'layouts.admin' : 'layouts.default';
+
+        return view("equipamentos.show", compact("equipamento", "categoria", "locador"))->with('layout', $layout);
     }
 
     /**
@@ -118,8 +131,21 @@ class EquipamentoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+public function destroy(string $id)
     {
-        //
+        try {
+            $equipamento = Equipamento::findOrFail($id);
+            $equipamento->delete();
+            return redirect()->route("equipamentos.index")
+                ->with("sucesso", "Registro excluído!");
+        } catch (\Exception $e) {
+            Log::error("Erro ao excluir o registro do equipamento! " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'id' => $id
+            ]);
+            return redirect()->route("equipamentos.index")
+                ->with("erro", "Erro ao excluir!");
+        }
     }
+
 }
