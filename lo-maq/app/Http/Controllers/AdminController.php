@@ -8,6 +8,13 @@ use App\Models\User;
 
 class AdminController extends Controller
 {
+    public function index()
+    {
+        $users = User::all();
+        $layout = 'layouts.admin';
+        return view('adm.users.index', compact('users', 'layout'));
+    }
+
     public function edit(string $id)
     {
         $user = User::findOrFail($id);
@@ -102,6 +109,23 @@ class AdminController extends Controller
             ]);
             return redirect()->route("adm.user.list")
                 ->with("erro", "Erro ao atualizar!");
+        }
+    }
+
+    public function deleteUser(Request $request, string $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
+
+            return redirect()->route("adm.user.list")
+                ->with("sucesso", "Usuário deletado com sucesso!");
+        } catch (\Exception $e) {
+            Log::error("Erro ao deletar o usuário! " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return redirect()->route("adm.user.list")
+                ->with("erro", "Erro ao deletar o usuário!");
         }
     }
 }
