@@ -39,7 +39,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('/adm/users/edit', [AdminController::class, 'EditUser'])->name('adm.user.edit');
     Route::delete('/adm/users/{id}', [AdminController::class, 'deleteUser'])->name('adm.user.delete');
 
-    Route::get('/admin', function () {
+    Route::get('/adm', function () {
         return view('home.home-adm');
     })->name('admin');
 });
