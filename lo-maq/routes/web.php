@@ -30,16 +30,12 @@ Route::middleware("auth")->group(function () {
     
 });
 
-// Admin routes - protegidas com middleware de verificação de acesso
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/adm/users', [AdminController::class, 'index'])->name('adm.user.list');
-    Route::get('/adm/users/create', [AdminController::class, 'ViewCreateUser'])->name('adm.user.create');
-    Route::post('/adm/users/create', [AdminController::class, 'CreateUser'])->name('adm.user.create');
-    Route::get('/adm/users/{id}/edit', [AdminController::class, 'ViewEditUser'])->name('adm.user.ViewEdit');
-    Route::patch('/adm/users/edit', [AdminController::class, 'EditUser'])->name('adm.user.edit');
-    Route::delete('/adm/users/{id}', [AdminController::class, 'deleteUser'])->name('adm.user.delete');
+//futuro middleware para admin
+Route::get('/adm/users/create', [AdminController::class, 'ViewCreateUser'])->name('adm.user.create');
+Route::post('/adm/users/create', [AdminController::class, 'CreateUser'])->name('adm.user.create');
+Route::get('/adm/users/{id}/edit', [AdminController::class, 'ViewEditUser'])->name('adm.user.ViewEdit');
+Route::patch('/adm/users/edit', [AdminController::class, 'EditUser'])->name('adm.user.edit');
 
-    Route::get('/adm', function () {
-        return view('home.home-adm');
-    })->name('admin');
+Route::get('/admin', function () {
+    return view('home.home-adm');
 });
