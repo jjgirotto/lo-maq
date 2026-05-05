@@ -45,17 +45,17 @@
                 </div>
             </div>
         </div>
-        {{--
-        <!-- Card Locatários -->
+        <!-- Card Usuários -->
         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="card-body shadow-sm border-0 rounded-3">
                 <div class="card-body p-3 text-center">
                     <h5 class="card-title fw-semibold mb-3">Usuários</h5>
                     <p class="card-text text-muted">Gerencie informações dos Usuários.</p>
-                    <a href="/adm/users" class="btn btn-primary btn-sm w-100">Abrir</a>
+                    <a href="{{ route('adm.user.create') }}" class="btn btn-primary btn-sm w-100">Novo Usuário</a>
                 </div>
             </div>
         </div>
+        {{--
         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="card-body shadow-sm border-0 rounded-3">
                 <div class="card-body p-3 text-center">
@@ -64,7 +64,7 @@
                      <a href="{{ route('anuncios.meus') }}" class="btn btn-primary btn-sm w-100">Abrir</a> 
                 </div>
             </div>
-        </div> 
+        </div>
         --}}
     </div>
 </div>
