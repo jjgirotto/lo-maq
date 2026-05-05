@@ -4,8 +4,10 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EquipamentoController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AuthController; //para o futuro
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Middleware\NivelAdmMiddleware;
+use App\Http\Middleware\NivelCliMiddleware;
 
 Route::get('/', [HomeController::class, 'indexPublic'])->name('home-cli');
 
@@ -31,15 +33,22 @@ Route::middleware("auth")->group(function () {
 });
 
 // Admin routes - protegidas com middleware de verificação de acesso
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/adm/users', [AdminController::class, 'index'])->name('adm.user.list');
+Route::middleware([NivelAdmMiddleware::class])->group(function () {
+    Route::get('/adm/users', [AdminController::class, 'ViewUserList'])->name('adm.user.list');
     Route::get('/adm/users/create', [AdminController::class, 'ViewCreateUser'])->name('adm.user.create');
     Route::post('/adm/users/create', [AdminController::class, 'CreateUser'])->name('adm.user.create');
+    Route::get('/adm/users/{id}', [AdminController::class, 'ShowUser'])->name('adm.user.show');
+    Route::delete('/adm/users/{id}', [AdminController::class, 'UserDelete'])->name('adm.user.show');
     Route::get('/adm/users/{id}/edit', [AdminController::class, 'ViewEditUser'])->name('adm.user.ViewEdit');
     Route::patch('/adm/users/edit', [AdminController::class, 'EditUser'])->name('adm.user.edit');
-    Route::delete('/adm/users/{id}', [AdminController::class, 'deleteUser'])->name('adm.user.delete');
-
     Route::get('/adm', function () {
         return view('home.home-adm');
     })->name('admin');
+
+});
+
+Route::middleware([NivelCliMiddleware::class])->group(function () {
+    Route::get('home-cli', function () {
+        return view("home-cli");
+    });
 });
