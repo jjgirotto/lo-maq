@@ -12,7 +12,7 @@ class AdminController extends Controller
     {
         $users = User::all();
         $layout = 'layouts.admin';
-        return view('adm.users.index', compact('users', 'layout'));
+        return view('adm.users.list', compact('users', 'layout'));
     }
 
     public function edit(string $id)
@@ -66,6 +66,13 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
         return view("adm.users.edit", compact("user", 'id'));
+    }
+
+    public function ViewUser(string $id)
+    {
+        $user = User::findOrFail($id);
+        $layout = 'layouts.admin';
+        return view('adm.users.show', compact('user', 'layout'));
     }
 
     public function EditUser(Request $request)

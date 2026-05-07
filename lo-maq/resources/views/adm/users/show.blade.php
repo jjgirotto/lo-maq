@@ -3,91 +3,50 @@
 @section('conteudo')
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Listagem de Usuários</h1>
-        <a href="{{ route('adm.user.create') }}" class="btn btn-primary">Criar Novo Usuário</a>
+        <h1>Consulta de Usuário</h1>
+        <div class="d-flex gap-2">
+            <a href="{{ route('adm.user.list') }}" class="btn btn-secondary">Voltar</a>
+            <a href="{{ route('adm.user.ViewEdit', $user->id) }}" class="btn btn-warning">Editar</a>
+        </div>
     </div>
 
-    @if (session('sucesso'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('sucesso') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nome</label>
+                    <input type="text" class="form-control" value="{{ $user->name }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" value="{{ $user->email }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Telefone</label>
+                    <input type="text" class="form-control" value="{{ $user->telefone ?? 'N/A' }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tipo de Acesso</label>
+                    <input type="text" class="form-control" value="{{ $user->access === 'ADM' ? 'Administrador' : 'Cliente' }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Endereço</label>
+                    <input type="text" class="form-control" value="{{ $user->endereco ?? 'N/A' }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">CPF</label>
+                    <input type="text" class="form-control" value="{{ $user->cpf ?? 'N/A' }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">CNPJ</label>
+                    <input type="text" class="form-control" value="{{ $user->cnpj ?? 'N/A' }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Criado em</label>
+                    <input type="text" class="form-control" value="{{ $user->created_at ? $user->created_at->format('d/m/Y H:i') : 'N/A' }}" readonly>
+                </div>
+            </div>
         </div>
-    @endif
-
-    @if (session('erro'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('erro') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-
-    @if ($users->count() > 0)
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Telefone</th>
-                        <th>Tipo de Acesso</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($users as $user)
-                        <tr>
-                            <td>{{ $user->id }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td>{{ $user->telefone ?? 'N/A' }}</td>
-                            <td>
-                                @if ($user->access === 'ADM')
-                                    <span class="badge bg-danger">Administrador</span>
-                                @else
-                                    <span class="badge bg-info">Cliente</span>
-                                @endif
-                            </td>
-                            <td>
-                                <a href="{{ route('adm.user.ViewEdit', $user->id) }}" class="btn btn-sm btn-warning">
-                                    <i class="bi bi-pencil"></i> Editar
-                                </a>
-                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">
-                                    <i class="bi bi-trash"></i> Deletar
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Modal de Confirmação de Deleção -->
-                        <div class="modal fade" id="deleteModal{{ $user->id }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Confirmar Deleção</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Tem certeza que deseja deletar o usuário <strong>{{ $user->name }}</strong>?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                        <form method="POST" action="{{ route('adm.user.delete', $user->id) }}" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Deletar</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @else
-        <div class="alert alert-info" role="alert">
-            Nenhum usuário cadastrado. <a href="{{ route('adm.user.create') }}">Criar novo usuário</a>
-        </div>
-    @endif
+    </div>
 
 @endsection

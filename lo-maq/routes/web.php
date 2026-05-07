@@ -39,11 +39,11 @@ Route::middleware("auth")->group(function () {
 
         Route::prefix('adm')->group(function () {
             // Pasta: resources/views/adm/users/...
-            Route::get('/users', [AdminController::class, 'ViewUserList'])->name('adm.user.list');
+            Route::get('/users', [AdminController::class, 'index'])->name('adm.user.list');
             Route::get('/users/create', [AdminController::class, 'ViewCreateUser'])->name('adm.user.create');
             Route::post('/users/create', [AdminController::class, 'CreateUser'])->name('adm.user.create');
-            Route::get('/users/{id}', [AdminController::class, 'ShowUser'])->name('adm.user.show');
-            Route::delete('/users/{id}', [AdminController::class, 'UserDelete'])->name('adm.user.delete');
+            Route::get('/users/{id}', [AdminController::class, 'ViewUser'])->name('adm.user.show');
+            Route::delete('/users/{id}', [AdminController::class, 'deleteUser'])->name('adm.user.delete');
             Route::get('/users/{id}/edit', [AdminController::class, 'ViewEditUser'])->name('adm.user.ViewEdit');
             Route::patch('/users/edit', [AdminController::class, 'EditUser'])->name('adm.user.edit');
         });
