@@ -9,46 +9,50 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Middleware\NivelAdmMiddleware;
 use App\Http\Middleware\NivelCliMiddleware;
 
-Route::get('/', [HomeController::class, 'indexPublic'])->name('home-cli');
-
+// --- 1. ROTAS PÚBLICAS ---
+Route::get('/', [HomeController::class, 'indexPublic'])->name('home-cli-public');
 Route::resource('/equipamentos', EquipamentoController::class);
 
-// LOGIN/LOGOUT
+// Login e Registo (Pasta 'auth')
 Route::get("/login", [AuthController::class, "ShowFormLogin"])->name("login");
 Route::post("/login", [AuthController::class, "Login"]);
+Route::get("/cadastrar", [AuthController::class, "ShowFormRegister"])->name("register");
+Route::post("/cadastrar", [AuthController::class, "Register"])->name("register.post");
 
-//middleware: rotas protegidas
+
+// --- 2. ROTAS PROTEGIDAS (PRECISA DE LOGIN) ---
 Route::middleware("auth")->group(function () {
     
-    // Rota de logout
-    Route::post("/logout", [AuthController::class, "Logout"]);
+    Route::post("/logout", [AuthController::class, "Logout"])->name('logout');
     
-    // Homepage após o usuário fazer o login com sucesso
+    // Redireciona conforme o nível (ADM ou CLI)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    // Rotas para o cliente
     Route::get('/minhaConta', [ClienteController::class, 'edit']);
     Route::patch('/minhaConta', [ClienteController::class, 'updateCredentials']);
-    
-});
 
-// Admin routes - protegidas com middleware de verificação de acesso
-Route::middleware([NivelAdmMiddleware::class])->group(function () {
-    Route::get('/adm/users', [AdminController::class, 'ViewUserList'])->name('adm.user.list');
-    Route::get('/adm/users/create', [AdminController::class, 'ViewCreateUser'])->name('adm.user.create');
-    Route::post('/adm/users/create', [AdminController::class, 'CreateUser'])->name('adm.user.create');
-    Route::get('/adm/users/{id}', [AdminController::class, 'ShowUser'])->name('adm.user.show');
-    Route::delete('/adm/users/{id}', [AdminController::class, 'UserDelete'])->name('adm.user.show');
-    Route::get('/adm/users/{id}/edit', [AdminController::class, 'ViewEditUser'])->name('adm.user.ViewEdit');
-    Route::patch('/adm/users/edit', [AdminController::class, 'EditUser'])->name('adm.user.edit');
-    Route::get('/adm', function () {
-        return view('home.home-adm');
-    })->name('admin');
+    // --- Subgrupo: Administradores ---
+    Route::middleware([NivelAdmMiddleware::class])->group(function () {
+        Route::get('/adm', function () {
+            return view('home.home-adm', ['layout' => 'layouts.admin']); 
+        })->name('admin');
 
-});
+        Route::prefix('adm')->group(function () {
+            // Pasta: resources/views/adm/users/...
+            Route::get('/users', [AdminController::class, 'ViewUserList'])->name('adm.user.list');
+            Route::get('/users/create', [AdminController::class, 'ViewCreateUser'])->name('adm.user.create');
+            Route::post('/users/create', [AdminController::class, 'CreateUser'])->name('adm.user.create');
+            Route::get('/users/{id}', [AdminController::class, 'ShowUser'])->name('adm.user.show');
+            Route::delete('/users/{id}', [AdminController::class, 'UserDelete'])->name('adm.user.delete');
+            Route::get('/users/{id}/edit', [AdminController::class, 'ViewEditUser'])->name('adm.user.ViewEdit');
+            Route::patch('/users/edit', [AdminController::class, 'EditUser'])->name('adm.user.edit');
+        });
+    });
 
-Route::middleware([NivelCliMiddleware::class])->group(function () {
-    Route::get('home-cli', function () {
-        return view("home-cli");
+    // --- Subgrupo: Clientes ---
+    Route::middleware([NivelCliMiddleware::class])->group(function () {
+        Route::get('/home-cli', function () {
+            return view("home.home-cli", ['layout' => 'layouts.default']);
+        })->name('home.cliente');
     });
 });
