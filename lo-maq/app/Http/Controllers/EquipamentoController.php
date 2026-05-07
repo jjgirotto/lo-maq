@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Equipamento;
-use App\Models\Categoria;
+// use App\Models\Categoria;
 use App\Models\User;
 
 class EquipamentoController extends Controller
@@ -16,7 +16,7 @@ class EquipamentoController extends Controller
     public function index(Request $request)
     {
         $query = Equipamento::query();
-        $categorias = Categoria::all();
+        //$categorias = Categoria::all();
         $layout = 'layouts.default'; // Layout padrão para usuários não logados
         $locador = User::all();
 
@@ -24,13 +24,41 @@ class EquipamentoController extends Controller
             $layout = (auth()->user()->access === 'ADM') ? 'layouts.admin' : 'layouts.default';
         }
 
+        // // Aplica o filtro de busca se houver termo
+        // if ($termo = $request->get('termo')) {
+        //     $query->where(function($q) use ($termo) {
+        //         $q->where('nome', 'like', '%' . $termo . '%')
+        //           ->orWhere('descricao', 'like', '%' . $termo . '%');
+        //     });
+        // }
 
+        // // Filtro por categoria
+        // if ($categoria = $request->get('categoria')) {
+        //     $query->where('categoria_id', $categoria);
+        // }
+
+        // se o usuário não for ADM, filtrar apenas os SEUS equipamentos
+        if (auth()->user()->access !== 'ADM') {
+            $query->where('locador_id', auth()->id());
+        }
+
+        $equipamentos = $query->paginate(9)->withQueryString();
+
+        // Se a requisição veio da rota /buscar, usa a view de busca
+        if ($request->is('buscar')) {
+            return view('buscar.index', compact('equipamentos', /*'categorias',*/ 'locador'))->with('layout', $layout);
+        }
+
+        // Se não, retorna a view padrão de equipamentos
+        return view("equipamentos.index", compact("equipamentos", /*'categorias',*/ 'locador'))->with('layout', $layout);
+    }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $categorias = Categoria::all();
+        //$categorias = Categoria::all();
+        $categorias = [];
         $locador = User::all();
 
         if (auth()->user()->access !== 'ADM') {
@@ -131,7 +159,7 @@ class EquipamentoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-public function destroy(string $id)
+    public function destroy(string $id)
     {
         try {
             $equipamento = Equipamento::findOrFail($id);
