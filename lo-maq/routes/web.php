@@ -53,6 +53,6 @@ Route::middleware("auth")->group(function () {
     Route::middleware([NivelCliMiddleware::class])->group(function () {
         Route::get('/home-cli', function () {
             return view("home.home-cli", ['layout' => 'layouts.default']);
-        })->name('home.cliente');
+        })->name('home.cliente'); 
     });
 });
