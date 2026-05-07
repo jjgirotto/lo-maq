@@ -27,6 +27,6 @@ class HomeController extends Controller
             return $this->index();
         }
         
-        return view('welcome');
+        return view('home.public');
     }
 }
