@@ -3,15 +3,19 @@
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EquipamentoController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Middleware\NivelAdmMiddleware;
 use App\Http\Middleware\NivelCliMiddleware;
 
+
 // --- 1. ROTAS PÚBLICAS ---
 Route::get('/', [HomeController::class, 'indexPublic'])->name('home-cli-public');
 Route::resource('/equipamentos', EquipamentoController::class);
+Route::resource('/categorias', CategoriaController::class);
+
 
 // Login e Registo (Pasta 'auth')
 Route::get("/login", [AuthController::class, "ShowFormLogin"])->name("login");
