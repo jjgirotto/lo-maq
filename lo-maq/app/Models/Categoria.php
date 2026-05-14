@@ -10,12 +10,8 @@ class Categoria extends Model
     protected $table = 'categorias';
     public $incrementing = true;
 
-    protected $fillable = ['titulo','equipamento_id'];
+    protected $fillable = ['titulo'];
 
-    public function equipamento()
-    {
-        return $this->belongsTo(Equipamento::class, 'equipamento_id', 'id');
-
-    }
+    
 }
 
