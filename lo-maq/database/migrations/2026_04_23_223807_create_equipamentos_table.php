@@ -28,7 +28,7 @@ return new class extends Migration
             $table->boolean('caucao_obrigatoria');
 
             $table->foreignId('locador_id')->constrained('users')->onDelete('restrict')->onUpdate('restrict');
-            $table->foreignId('categoria_id')->constrained('categoria')->onDelete('restrict')->onUpdate('restrict');
+            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('restrict')->onUpdate('restrict');
         });
     }
 
