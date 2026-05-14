@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Equipamento;
-// use App\Models\Categoria;
+use App\Models\Categoria;
 use App\Models\User;
 
 class EquipamentoController extends Controller
@@ -16,7 +16,7 @@ class EquipamentoController extends Controller
     public function index(Request $request)
     {
         $query = Equipamento::query();
-        //$categorias = Categoria::all();
+        $categorias = Categoria::all();
         $layout = 'layouts.default'; // Layout padrão para usuários não logados
         $locador = User::all();
 
@@ -46,19 +46,18 @@ class EquipamentoController extends Controller
 
         // Se a requisição veio da rota /buscar, usa a view de busca
         if ($request->is('buscar')) {
-            return view('buscar.index', compact('equipamentos', /*'categorias',*/ 'locador'))->with('layout', $layout);
+            return view('buscar.index', compact('equipamentos', 'categorias', 'locador'))->with('layout', $layout);
         }
 
         // Se não, retorna a view padrão de equipamentos
-        return view("equipamentos.index", compact("equipamentos", /*'categorias',*/ 'locador'))->with('layout', $layout);
+        return view("equipamentos.index", compact("equipamentos", 'categorias', 'locador'))->with('layout', $layout);
     }
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        //$categorias = Categoria::all();
-        $categorias = [];
+        $categorias = Categoria::all();
         $locador = User::all();
 
         if (auth()->user()->access !== 'ADM') {
