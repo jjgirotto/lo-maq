@@ -43,6 +43,4 @@
     </tbody>
 </table>
 
-{{ $locacoes->links() }}
-
 @endsection

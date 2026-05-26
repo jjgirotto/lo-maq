@@ -10,7 +10,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Middleware\NivelAdmMiddleware;
 use App\Http\Middleware\NivelCliMiddleware;
 use App\Http\Controllers\AnuncioController;
-
+use App\Http\Controllers\LocacaoController;
 
 // --- 1. ROTAS PÚBLICAS ---
 Route::get('/', [HomeController::class, 'indexPublic'])->name('home-cli-public');
@@ -54,6 +54,14 @@ Route::middleware("auth")->group(function () {
             Route::get('/users/{id}/edit', [AdminController::class, 'ViewEditUser'])->name('adm.user.ViewEdit');
             Route::patch('/users/edit', [AdminController::class, 'EditUser'])->name('adm.user.edit');
         });
+        Route::get('/adm/locacoes', [AdminController::class, 'ViewLocacaoList'])->name('adm.locacao.list');
+        Route::get('/adm/locacoes/create/equipamentos', [AdminController::class, 'ViewCreateLocacaoEquipamentos'])->name('adm.locacao.create.equipamentos');
+        Route::get('/adm/locacoes/create/{id}', [AdminController::class, 'ViewCreateLocacao'])->name('adm.locacao.ViewCreate');
+        Route::post('/adm/locacoes/create', [AdminController::class, 'CreateLocacao'])->name('adm.locacao.create');
+        Route::get('/adm/locacoes/{id}', [AdminController::class, 'ShowLocacao'])->name('adm.locacao.show');
+        Route::delete('/adm/locacoes/{id}', [AdminController::class, 'LocacaoDelete'])->name('adm.locacao.delete');
+        Route::get('/adm/locacoes/{id}/edit', [AdminController::class, 'ViewEditLocacao'])->name('adm.locacao.ViewEdit');
+        Route::patch('/adm/locacoes/edit', [AdminController::class, 'EditLocacao'])->name('adm.locacao.edit');
     });
 
     // --- Subgrupo: Clientes ---
@@ -61,6 +69,17 @@ Route::middleware("auth")->group(function () {
         Route::get('/home-cli', function () {
             return view("home.home-cli", ['layout' => 'layouts.default']);
         })->name('home.cliente'); 
+        Route::get('/locacoes', [LocacaoController::class, 'index'])->name('locacoes.index');
+
+        Route::get('/locacoes/show/{id}', [LocacaoController::class, 'show'])->name('locacoes.show');
+
+        Route::get('/locacoes/create', [LocacaoController::class, 'create'])->name('locacoes.create');
+
+        Route::post('/locacoes', [LocacaoController::class, 'store'])->name('locacoes.store');
+
+        Route::get('/locacoes/colab/create/{id}', [LocacaoController::class, 'createLocatarioDaLocacao'])->name('locacoes.showAdd');
+
+        Route::post('/locacoes/colab/create/', [LocacaoController::class, 'storeLocatarioDaLocacao'])->name('locacoes.addColab');
     });
 
     // --- Rotas de Anúncios (ADM e CLI) --- 

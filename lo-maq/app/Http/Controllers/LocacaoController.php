@@ -27,17 +27,17 @@ class LocacaoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(string $id)
-    {
-        //
-        $equipamento = Equipamento::findOrFail($id);
-        return view("locacoes.create", compact('equipamento'));
-    }
+    public function create()
+{
+    $equipamentos = Equipamento::all();
+
+    return view("locacoes.create", compact('equipamentos'));
+}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Equipamento $equipamento)
+    public function store(Request $request)
     {
         try {
             $data = $request->validate([
@@ -49,7 +49,8 @@ class LocacaoController extends Controller
             $startDate = Carbon::createFromFormat("Y-m-d", $data['data_inicio'])->startOfDay();
             $endDate = Carbon::createFromFormat("Y-m-d", $data['data_fim'])->endOfDay();
             $days = max(1, $startDate->diffInDays($endDate->copy()->startOfDay()) + 1);
-            $equipamentoSafe = Equipamento::findOrFail($equipamento->id);
+            $equipamentoSafe =
+    Equipamento::findOrFail($request->equipamento_id);
             $valorTotal = $equipamentoSafe->preco_periodo * $days;
             $dataComplete = array_merge(
                 $data,
