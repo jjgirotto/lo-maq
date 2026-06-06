@@ -88,15 +88,13 @@ class AnuncioController extends Controller
         $categorias = Categoria::all();
 
         // Layout dinâmico (ADM ou padrão)
-        $layout = (auth()->check() && auth()->user()->access === 'ADM')
+        $layout = auth()->user()->access === 'ADM'
             ? 'layouts.admin'
             : 'layouts.default';
 
-        if (Auth::user() != null) {
-            $user = Auth::user();
-            return view('anuncios.index', compact('anuncios', 'categorias', 'layout', 'user'));
-        } else
-            return view('anuncios.index', compact('anuncios', 'categorias', 'layout'));
+        $user = Auth::user();
+
+        return view('anuncios.index', compact('anuncios', 'categorias', 'layout', 'user'));
     }
 
     /**

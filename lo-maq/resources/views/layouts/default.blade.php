@@ -29,14 +29,15 @@
     @stack('head')
 </head>
 
-<body class="@yield('body_class')">
+<body class="site-body @yield('body_class')">
     @if (! View::hasSection('hide_site_bg'))
         <div class="site-bg" aria-hidden="true"></div>
     @endif
 
     <nav class="navbar navbar-expand-lg navbar-dark navbar-lomaq shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ route('home-cli-public') }}">
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
+                href="{{ auth()->check() && auth()->user()->access === 'CLI' ? route('home.cliente') : route('home-cli-public') }}">
                 <i class="bi bi-truck"></i> Lomaq
             </a>
 
@@ -46,27 +47,75 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarMain">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link @if(request()->routeIs('home-cli-public')) active @endif"
-                            href="{{ route('home-cli-public') }}">Início</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @if(request()->routeIs('anuncios.index')) active @endif"
-                            href="{{ route('anuncios.index') }}">Equipamentos</a>
-                    </li>
-                    @if(request()->routeIs('home-cli-public'))
-                        <li class="nav-item">
-                            <a class="nav-link" href="#como-funciona">Como funciona</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#vantagens">Vantagens</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contato">Contato</a>
-                        </li>
+                @auth
+                    @if(auth()->user()->access === 'CLI')
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link @if(request()->routeIs('home.cliente')) active @endif"
+                                    href="{{ route('home.cliente') }}">
+                                    <i class="bi bi-house me-1"></i> Minha área
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @if(request()->routeIs('anuncios.index')) active @endif"
+                                    href="{{ route('anuncios.index') }}">
+                                    <i class="bi bi-search me-1"></i> Buscar
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @if(request()->routeIs('anuncios.create', 'anunciar')) active @endif"
+                                    href="{{ route('anunciar') }}">
+                                    <i class="bi bi-megaphone me-1"></i> Anunciar
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @if(request()->routeIs('locacoes.*')) active @endif"
+                                    href="{{ route('locacoes.index') }}">
+                                    <i class="bi bi-calendar-check me-1"></i> Locações
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @if(request()->routeIs('anuncios.meus')) active @endif"
+                                    href="{{ route('anuncios.meus') }}">
+                                    <i class="bi bi-collection me-1"></i> Meus anúncios
+                                </a>
+                            </li>
+                        </ul>
+                    @else
+                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link @if(request()->routeIs('home-cli-public')) active @endif"
+                                    href="{{ route('home-cli-public') }}">Início</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @if(request()->routeIs('anuncios.index')) active @endif"
+                                    href="{{ route('anuncios.index') }}">Equipamentos</a>
+                            </li>
+                        </ul>
                     @endif
-                </ul>
+                @else
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link @if(request()->routeIs('home-cli-public')) active @endif"
+                                href="{{ route('home-cli-public') }}">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @if(request()->routeIs('anuncios.index')) active @endif"
+                                href="{{ auth()->check() ? route('anuncios.index') : route('login') }}">Equipamentos</a>
+                        </li>
+                        @if(request()->routeIs('home-cli-public'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="#como-funciona">Como funciona</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#vantagens">Vantagens</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#contato">Contato</a>
+                            </li>
+                        @endif
+                    </ul>
+                @endauth
 
                 <div class="d-flex align-items-center gap-3">
                     @guest
@@ -74,13 +123,18 @@
                     @endguest
 
                     @auth
-                        <span class="text-white-50 small d-none d-lg-inline">Olá, {{ auth()->user()->name }}</span>
+                        <span class="text-white-50 small d-none d-lg-inline">
+                            <i class="bi bi-person-circle me-1"></i>{{ auth()->user()->name }}
+                        </span>
                         <ul class="navbar-nav flex-row gap-1">
+                            @if(auth()->user()->access !== 'CLI')
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('anuncios.create') }}">Anunciar</a>
+                                </li>
+                            @endif
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('anuncios.create') }}">Anunciar</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/minhaConta">Minha conta</a>
+                                <a class="nav-link @if(request()->is('minhaConta')) active @endif"
+                                    href="/minhaConta">Minha conta</a>
                             </li>
                             <li class="nav-item">
                                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
@@ -95,13 +149,15 @@
         </div>
     </nav>
 
-    @if (View::hasSection('full_width'))
-        @yield('conteudo')
-    @else
-        <div class="container py-4">
+    <main class="site-main">
+        @if (View::hasSection('full_width'))
             @yield('conteudo')
-        </div>
-    @endif
+        @else
+            <div class="container py-4">
+                @yield('conteudo')
+            </div>
+        @endif
+    </main>
 
     @if (View::hasSection('site_footer'))
         @yield('site_footer')

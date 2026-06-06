@@ -18,7 +18,6 @@ use App\Http\Middleware\NivelCliMiddleware;
 Route::get('/', [HomeController::class, 'indexPublic'])->name('home-cli-public');
 Route::resource('/equipamentos', EquipamentoController::class);
 Route::resource('/categorias', CategoriaController::class);
-Route::get('/anuncios', [AnuncioController::class, 'index'])->name('anuncios.index');
 
 // Login e Registo (Pasta 'auth')
 Route::get("/login", [AuthController::class, "ShowFormLogin"])->name("login");
@@ -94,7 +93,8 @@ Route::middleware("auth")->group(function () {
         Route::delete('/locacoes/avaliar/edit/{id}', [AvaliacaoController::class, 'Destroy'])->name('locacoes.avaliar.destroy');
     });
 
-    // --- Rotas de Anúncios (ADM e CLI) --- 
+    // --- Rotas de Anúncios (ADM e CLI) ---
+    Route::get('/anuncios', [AnuncioController::class, 'index'])->name('anuncios.index');
     Route::get('/meus-anuncios', [AnuncioController::class, 'meusAnuncios'])->name('anuncios.meus');
 
     // CRUD de Anúncios (somente logados podem criar, editar, deletar)
