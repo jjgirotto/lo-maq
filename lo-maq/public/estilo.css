@@ -1,0 +1,315 @@
+:root {
+    --lomaq-green: #2d5a27;
+    --lomaq-green-dark: #234620;
+    --lomaq-green-light: #e8f0e6;
+    --lomaq-sage: #f4f8f3;
+    --lomaq-text: #3d3d3d;
+    --lomaq-muted: #6c757d;
+}
+
+body {
+    color: var(--lomaq-text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.site-bg {
+    opacity: 0.12;
+}
+
+.navbar-lomaq {
+    background-color: var(--lomaq-green) !important;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+}
+
+.navbar-lomaq .navbar-brand,
+.navbar-lomaq .nav-link {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.navbar-lomaq .nav-link:hover,
+.navbar-lomaq .nav-link:focus {
+    color: #fff !important;
+}
+
+.navbar-lomaq .nav-link.active {
+    text-decoration: underline;
+    text-underline-offset: 0.35rem;
+}
+
+.navbar-lomaq .btn-nav-login {
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    color: #fff;
+    padding: 0.35rem 1rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.navbar-lomaq .btn-nav-login:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.home-full-bleed {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    margin-top: 0;
+}
+
+.home-hero {
+    position: relative;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+    background-color: var(--lomaq-green-dark);
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+}
+
+.home-hero__content {
+    max-width: 640px;
+}
+
+.home-hero__title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+}
+
+.home-hero__lead {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin-bottom: 1.75rem;
+}
+
+.btn-lomaq-primary {
+    background-color: var(--lomaq-green);
+    border-color: var(--lomaq-green);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+}
+
+.btn-lomaq-primary:hover,
+.btn-lomaq-primary:focus {
+    background-color: var(--lomaq-green-dark);
+    border-color: var(--lomaq-green-dark);
+    color: #fff;
+}
+
+.btn-lomaq-outline {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    color: var(--lomaq-green-dark);
+    font-weight: 600;
+    padding: 0.65rem 1.5rem;
+}
+
+.btn-lomaq-outline:hover,
+.btn-lomaq-outline:focus {
+    background: #fff;
+    color: var(--lomaq-green-dark);
+}
+
+.home-search {
+    margin-top: -3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.home-search__card {
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.12);
+    padding: 1.25rem 1.5rem;
+}
+
+.home-stats {
+    background: var(--lomaq-sage);
+}
+
+.home-stat {
+    text-align: center;
+    padding: 1.5rem 1rem;
+}
+
+.home-stat__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--lomaq-green);
+    line-height: 1;
+    margin-bottom: 0.35rem;
+}
+
+.home-stat__label {
+    color: var(--lomaq-muted);
+    font-size: 0.95rem;
+}
+
+.home-section {
+    padding: 4rem 0;
+}
+
+.home-section__title {
+    color: var(--lomaq-green);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.home-benefit {
+    text-align: center;
+    padding: 0 1rem;
+}
+
+.home-benefit__icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background: var(--lomaq-green-light);
+    color: var(--lomaq-green);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.home-benefit__title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+    color: var(--lomaq-green-dark);
+}
+
+.home-benefit__text {
+    color: var(--lomaq-muted);
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
+
+.home-steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    position: relative;
+}
+
+.home-step {
+    flex: 1 1 200px;
+    max-width: 240px;
+    text-align: center;
+    position: relative;
+}
+
+.home-step__number {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--lomaq-green);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.home-step__icon {
+    font-size: 1.75rem;
+    color: var(--lomaq-green);
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.home-step__title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+    color: var(--lomaq-green-dark);
+}
+
+.home-step__text {
+    color: var(--lomaq-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.home-cta-banner {
+    background: var(--lomaq-green-light);
+    border-radius: 0.75rem;
+    padding: 2rem 2.5rem;
+}
+
+.home-cta-banner__text {
+    color: var(--lomaq-green-dark);
+    font-size: 1.05rem;
+    margin-bottom: 0;
+}
+
+.site-footer {
+    background: #fff;
+    border-top: 1px solid #e9ecef;
+    padding: 3rem 0 1.5rem;
+    margin-top: 2rem;
+}
+
+.site-footer__brand {
+    font-weight: 700;
+    color: var(--lomaq-green);
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.site-footer__heading {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: var(--lomaq-text);
+}
+
+.site-footer a {
+    color: var(--lomaq-muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.site-footer a:hover {
+    color: var(--lomaq-green);
+}
+
+.site-footer__copy {
+    border-top: 1px solid #e9ecef;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    text-align: center;
+    color: var(--lomaq-muted);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 767.98px) {
+    .home-hero {
+        min-height: 420px;
+    }
+
+    .home-search {
+        margin-top: -2rem;
+    }
+
+    .home-cta-banner {
+        text-align: center;
+    }
+
+    .home-cta-banner .btn {
+        margin-top: 1rem;
+    }
+}
