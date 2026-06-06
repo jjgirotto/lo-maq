@@ -53,6 +53,14 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label">Tipo de Locação</label>
+        <select name="tipo_locacao" class="form-select" required>
+            <option value="0">Padrão</option>
+            <option value="1">Estendida</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
         <label class="form-label">Valor Total</label>
         <input type="text" id="valor_total" name="valor_total" class="form-control" readonly>
     </div>
