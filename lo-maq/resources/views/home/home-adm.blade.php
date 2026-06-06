@@ -55,7 +55,7 @@
                 </div>
             </div>
         </div>
-        {{--
+
         <div class="col-lg-3 col-md-6 col-sm-12">
             <div class="card-body shadow-sm border-0 rounded-3">
                 <div class="card-body p-3 text-center">
@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-        --}}
+
     </div>
 </div>
 
