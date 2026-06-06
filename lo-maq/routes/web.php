@@ -65,9 +65,11 @@ Route::middleware("auth")->group(function () {
         Route::patch('/adm/locacoes/edit', [AdminController::class, 'EditLocacao'])->name('adm.locacao.edit');
 
         // Avaliações ADM (Adicionadas aqui)
-        Route::get('/adm/avaliacoes', [AvaliacaoController::class, 'index'])->name('adm.avaliacoes.index');
-        Route::get('/adm/avaliacoes/{id}', [AvaliacaoController::class, 'show'])->name('adm.avaliacoes.show');
-        Route::delete('/adm/avaliacoes/{id}', [AvaliacaoController::class, 'destroy'])->name('adm.avaliacoes.destroy');
+        Route::get('/adm/avaliar/{id}', [AdminController::class, 'Create'])->name('adm.avaliar');
+        Route::post('/adm/avaliar/store/', [AdminController::class, 'Store'])->name('adm.avaliar.store');
+        Route::get('/adm/avaliar/{id}/edit', [AdminController::class, 'EditAvaliacao'])->name('adm.avaliar.edit');
+        Route::patch('/adm/avaliar/edit', [AdminController::class, 'UpdateAvaliacao'])->name('adm.avaliar.update');
+        Route::delete('/adm/avaliar/edit/{id}', [AdminController::class, 'DestroyAvaliacao'])->name('adm.avaliar.destroy');
     });
 
     // --- Subgrupo: Clientes ---
@@ -84,9 +86,12 @@ Route::middleware("auth")->group(function () {
         Route::get('/locacoes/colab/create/{id}', [LocacaoController::class, 'createLocatarioDaLocacao'])->name('locacoes.showAdd');
         Route::post('/locacoes/colab/create/', [LocacaoController::class, 'storeLocatarioDaLocacao'])->name('locacoes.addColab');
 
-        // Avaliações Cliente (Adicionadas aqui)
-        Route::get('/locacoes/avaliar/{id}', [AvaliacaoController::class, 'createClient'])->name('locacoes.avaliar.create');
-        Route::post('/locacoes/avaliar/{id}', [AvaliacaoController::class, 'storeClient'])->name('locacoes.avaliar.store');
+        // Avaliações Cliente
+        Route::get('/locacoes/avaliar/{id}', [AvaliacaoController::class, 'Create'])->name('locacoes.avaliar');
+        Route::post('/locacoes/avaliar/store/', [AvaliacaoController::class, 'Store'])->name('locacoes.avaliar.store');
+        Route::get('/locacoes/avaliar/{id}/edit', [AvaliacaoController::class, 'Edit'])->name('locacoes.avaliar.edit');
+        Route::patch('/locacoes/avaliar/edit', [AvaliacaoController::class, 'Update'])->name('locacoes.avaliar.update');
+        Route::delete('/locacoes/avaliar/edit/{id}', [AvaliacaoController::class, 'Destroy'])->name('locacoes.avaliar.destroy');
     });
 
     // --- Rotas de Anúncios (ADM e CLI) --- 
