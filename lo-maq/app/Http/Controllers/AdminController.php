@@ -151,15 +151,14 @@ class AdminController extends Controller
 
     public function ViewLocacaoList()
     {
-        //
-        $locacoes = Locacao::all();
-        $equipamentos = Equipamento::all();
-        return view("adm.locacoes.list", compact("locacoes", "equipamentos"));
+        $locacoes = Locacao::with(['equipamento', 'usuario'])->get();
+
+        return view("adm.locacoes.list", compact('locacoes'));
     }
 
     public function ShowLocacao(string $id)
     {
-        $locacao = Locacao::findOrFail($id);
+        $locacao = Locacao::with(['locador', 'usuario'])->findOrFail($id);
         $equipamento = Equipamento::findOrFail($locacao->equipamento_id);
         return view("adm.locacoes.show", compact("locacao", "equipamento", 'id'));
     }
@@ -190,17 +189,22 @@ class AdminController extends Controller
     public function ViewEditLocacao(string $id)
     {
         $locacao = Locacao::findOrFail($id);
-        $equipamento = Equipamento::findOrFail($locacao->equipamento_id);
-        return view("adm.locacoes.edit", compact("locacao", 'equipamento', 'id'));
+        $equipamentos = Equipamento::orderBy('nome')->get();
+        $users = User::orderBy('name')->get();
+
+        return view("adm.locacoes.edit", compact('locacao', 'equipamentos', 'users', 'id'));
     }
     public function EditLocacao(Request $request)
     {
         try {
 
             $locacao = Locacao::findOrFail($request->id);
-            $equipamento = Equipamento::findOrFail($locacao->equipamento_id);
 
             $dataToUpdate = [];
+
+            if ($request->filled('equipamento_id')) {
+                $dataToUpdate['equipamento_id'] = $request->input('equipamento_id');
+            }
             if ($request->filled('data_inicio')) {
                 $dataToUpdate['data_inicio'] = $request->input('data_inicio');
             }
@@ -208,39 +212,26 @@ class AdminController extends Controller
                 $dataToUpdate['data_fim'] = $request->input('data_fim');
             }
 
-            if ($request->filled('data_inicio') && !$request->filled('data_fim')) {
-                $startDate = Carbon::createFromFormat("Y-m-d", $dataToUpdate['data_inicio'])->startOfDay();
-                $endDate = Carbon::createFromFormat("Y-m-d", $locacao->data_fim)->endOfDay();
+            $equipamentoId = $dataToUpdate['equipamento_id'] ?? $locacao->equipamento_id;
+            $equipamento = Equipamento::findOrFail($equipamentoId);
+            $dataInicio = $dataToUpdate['data_inicio'] ?? $locacao->data_inicio;
+            $dataFim = $dataToUpdate['data_fim'] ?? $locacao->data_fim;
+
+            if ($request->filled('equipamento_id') || $request->filled('data_inicio') || $request->filled('data_fim')) {
+                $startDate = Carbon::createFromFormat("Y-m-d", $dataInicio)->startOfDay();
+                $endDate = Carbon::createFromFormat("Y-m-d", $dataFim)->endOfDay();
                 $days = max(1, $startDate->diffInDays($endDate->copy()->startOfDay()) + 1);
-                $equipamentoSafe = Equipamento::findOrFail($equipamento->id);
-                $valorTotal = $equipamentoSafe->preco_periodo * $days;
-                $dataToUpdate['valor_total'] = $valorTotal;
-            }
-            if (!$request->filled('data_inicio') && $request->filled('data_fim')) {
-                $startDate = Carbon::createFromFormat("Y-m-d", $locacao->data_inicio)->startOfDay();
-                $endDate = Carbon::createFromFormat("Y-m-d", $dataToUpdate['data_fim'])->endOfDay();
-                $days = max(1, $startDate->diffInDays($endDate->copy()->startOfDay()) + 1);
-                $equipamentoSafe = Equipamento::findOrFail($equipamento->id);
-                $valorTotal = $equipamentoSafe->preco_periodo * $days;
-                $dataToUpdate['valor_total'] = $valorTotal;
-            }
-            if ($request->filled('data_inicio') && $request->filled('data_fim')) {
-                $startDate = Carbon::createFromFormat("Y-m-d", $dataToUpdate['data_inicio'])->startOfDay();
-                $endDate = Carbon::createFromFormat("Y-m-d", $dataToUpdate['data_fim'])->endOfDay();
-                $days = max(1, $startDate->diffInDays($endDate->copy()->startOfDay()) + 1);
-                $equipamentoSafe = Equipamento::findOrFail($equipamento->id);
-                $valorTotal = $equipamentoSafe->preco_periodo * $days;
-                $dataToUpdate['valor_total'] = $valorTotal;
+                $dataToUpdate['valor_total'] = $equipamento->preco_periodo * $days;
             }
 
-            if ($request->filled('tipo_locacao')) {
-                $dataToUpdate['tipo_locacao'] = $request->input('tipo_locacao');
+            if ($request->has('status_pagamento')) {
+                $dataToUpdate['status_pagamento'] = $request->input('status_pagamento', '0');
             }
-            if ($request->filled('status_equipamento')) {
-                $dataToUpdate['status_equipamento'] = $request->input('status_equipamento');
+            if ($request->filled('created_by')) {
+                $dataToUpdate['created_by'] = $request->input('created_by');
             }
-            if ($request->filled('status_pagamento')) {
-                $dataToUpdate['status_pagamento'] = $request->input('status_pagamento');
+            if ($request->filled('usuario_id')) {
+                $dataToUpdate['usuario_id'] = $request->input('usuario_id');
             }
 
             $locacao->update($dataToUpdate);
@@ -258,30 +249,23 @@ class AdminController extends Controller
         }
     }
 
-    public function ViewCreateLocacaoEquipamentos()
+    public function ViewCreateLocacao(Request $request)
     {
-        $anuncios = \App\Models\Anuncio::with(['equipamento', 'user'])
-            ->orderBy('created_at', 'desc')
-            ->get();
-        $equipamento = Equipamento::all();
-        return view("adm.locacoes.equipamentos", compact('anuncios'));
-    }
-
-
-    public function ViewCreateLocacao(string $id)
-    {
-        $users = User::all();
-        $equipamento = Equipamento::findOrFail($id);
-        return view("adm.locacoes.create", compact('equipamento', 'users'));
+        $users = User::orderBy('name')->get();
+        $equipamentos = Equipamento::orderBy('nome')->get();
+        $equipamentoSelecionado = $request->query('equipamento_id');
+        return view("adm.locacoes.create", compact('equipamentos', 'users', 'equipamentoSelecionado'));
     }
 
     public function CreateLocacao(Request $request)
     {
         try {
             $data = $request->validate([
+                'equipamento_id' => ['required', 'exists:equipamento,id'],
                 'data_inicio' => ['required', 'date'],
                 'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
-                'tipo_locacao' => ['required', 'boolean'],
+                'created_by' => ['required', 'exists:users,id'],
+                'usuario_id' => ['required', 'exists:users,id'],
             ]);
 
             $startDate = Carbon::createFromFormat("Y-m-d", $data['data_inicio'])->startOfDay();
@@ -294,7 +278,9 @@ class AdminController extends Controller
                 [
                     'equipamento_id' => $request->equipamento_id,
                     'valor_total' => $valorTotal,
+                    'usuario_id' => $request->usuario_id,
                     'created_by' => $request->created_by,
+                    'status_pagamento' => $request->input('status_pagamento', '0'),
                 ]
             );
             $locacao = Locacao::create($dataComplete);

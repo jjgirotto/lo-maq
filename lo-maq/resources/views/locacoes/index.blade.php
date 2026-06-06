@@ -9,61 +9,49 @@
     @if(session('erro'))
         <p class="text-danger">{{ session('erro') }}</p>
     @endif
+    <a href="{{ route('locacoes.create') }}" class="btn btn-success mb-3">Nova Locação</a>
     <div class="table-responsive rounded-3">
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
                     <th>Nome</th>
                     <th>Marca</th>
-                    <th>Inicio</th>
+                    <th>Início</th>
                     <th>Fim</th>
-                    <th>Qtd. Colab</th>
-                    <th>Preco Total</th>
-                    <th>Preco Indiv.</th>
-                    <th>Status</th>
+                    <th>Total</th>
                     <th>Pagamento</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-
-                @foreach($locacoes as $l)
-                    <div>
-                        <tr class="align-middle">
-                            @foreach ($equipamentos as $e)
-                                @if ($e->id == $l->equipamento_id)
-                                    <td>
-                                        {{ $e->nome }}
-                                    </td>
-                                    <td>
-                                        {{ $e->marca }}
-                                    </td>
-                                @endif
-                            @endforeach
-
-                            <td>{{ Carbon\Carbon::parse($l->data_inicio)->format('d/m/Y') }}</td>
-                            <td>{{ Carbon\Carbon::parse($l->data_fim)->format('d/m/Y') }}</td>
-                            <td>{{ $locatariosDasLocacoes->where('locacao_id', $l->id)->count() }}</td>
-                            <td>{{ $l->valor_total }}</td>
-                            @php
-                                $qtd = $locatariosDasLocacoes->where('locacao_id', $l->id)->count();
-                                $individual = $qtd > 0 ? $l->valor_total / $qtd : 0;
-                            @endphp
-                            <td>{{ number_format($individual, 2, ',', '.') }}</td>
-                            <td>{{ $l->status_equipamento }}</td>
-                            <td>{{ $l->status_pagamento }}</td>
-
-                            <td class="text-end">
-                                <div class="d-flex flex-wrap justify-content-end gap-2">
+                @forelse($locacoes as $l)
+                    <tr class="align-middle">
+                        <td>{{ $l->equipamento->nome ?? '—' }}</td>
+                        <td>{{ $l->equipamento->marca ?? '—' }}</td>
+                        <td>{{ \Carbon\Carbon::parse($l->data_inicio)->format('d/m/Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($l->data_fim)->format('d/m/Y') }}</td>
+                        <td>{{ $l->valor_total }}</td>
+                        <td>{{ $l->statusPagamentoLabel() }}</td>
+                        <td class="text-end">
+                            <div class="d-flex flex-wrap justify-content-end gap-2">
+                                @if(\App\Models\Locacao::statusPagamentoAtivo($l->status_pagamento))
                                     <a href="{{ route('locacoes.avaliar', $l->id) }}" class="btn btn-sm btn-warning">Avaliar</a>
-                                    <a href="{{ route('locacoes.showAdd', $l->id) }}" class="btn btn-sm btn-warning">ADD</a>
-                                    <a href="{{ route('locacoes.show', $l->id) }}" class="btn btn-sm btn-info">Consultar</a>
-                                </div>
-                            </td>
-                        </tr>
-                    </div>
-                @endforeach
+                                @else
+                                    <span class="btn btn-sm btn-warning disabled opacity-50"
+                                        style="pointer-events: none;"
+                                        title="Disponível após confirmação do pagamento">Avaliar</span>
+                                @endif
+                                <a href="{{ route('locacoes.show', $l->id) }}" class="btn btn-sm btn-info">Consultar</a>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">Nenhuma locação encontrada.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
+    </div>
 
 @endsection

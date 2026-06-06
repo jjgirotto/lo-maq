@@ -55,9 +55,8 @@ Route::middleware("auth")->group(function () {
 
         // Locações ADM
         Route::get('/adm/locacoes', [AdminController::class, 'ViewLocacaoList'])->name('adm.locacao.list');
-        Route::get('/adm/locacoes/create/equipamentos', [AdminController::class, 'ViewCreateLocacaoEquipamentos'])->name('adm.locacao.create.equipamentos');
-        Route::get('/adm/locacoes/create/{id}', [AdminController::class, 'ViewCreateLocacao'])->name('adm.locacao.ViewCreate');
-        Route::post('/adm/locacoes/create', [AdminController::class, 'CreateLocacao'])->name('adm.locacao.create');
+        Route::get('/adm/locacoes/create', [AdminController::class, 'ViewCreateLocacao'])->name('adm.locacao.create');
+        Route::post('/adm/locacoes/create', [AdminController::class, 'CreateLocacao'])->name('adm.locacao.store');
         Route::get('/adm/locacoes/{id}', [AdminController::class, 'ShowLocacao'])->name('adm.locacao.show');
         Route::delete('/adm/locacoes/{id}', [AdminController::class, 'LocacaoDelete'])->name('adm.locacao.delete');
         Route::get('/adm/locacoes/{id}/edit', [AdminController::class, 'ViewEditLocacao'])->name('adm.locacao.ViewEdit');
@@ -82,8 +81,6 @@ Route::middleware("auth")->group(function () {
         Route::get('/locacoes/show/{id}', [LocacaoController::class, 'show'])->name('locacoes.show');
         Route::get('/locacoes/create', [LocacaoController::class, 'create'])->name('locacoes.create');
         Route::post('/locacoes', [LocacaoController::class, 'store'])->name('locacoes.store');
-        Route::get('/locacoes/colab/create/{id}', [LocacaoController::class, 'createLocatarioDaLocacao'])->name('locacoes.showAdd');
-        Route::post('/locacoes/colab/create/', [LocacaoController::class, 'storeLocatarioDaLocacao'])->name('locacoes.addColab');
 
         // Avaliações Cliente
         Route::get('/locacoes/avaliar/{id}', [AvaliacaoController::class, 'Create'])->name('locacoes.avaliar');
