@@ -29,7 +29,7 @@
     @stack('head')
 </head>
 
-<body class="@yield('body_class')">
+<body class="site-body @yield('body_class')">
     @if (! View::hasSection('hide_site_bg'))
         <div class="site-bg" aria-hidden="true"></div>
     @endif
@@ -95,13 +95,15 @@
         </div>
     </nav>
 
-    @if (View::hasSection('full_width'))
-        @yield('conteudo')
-    @else
-        <div class="container py-4">
+    <main class="site-main">
+        @if (View::hasSection('full_width'))
             @yield('conteudo')
-        </div>
-    @endif
+        @else
+            <div class="container py-4">
+                @yield('conteudo')
+            </div>
+        @endif
+    </main>
 
     @if (View::hasSection('site_footer'))
         @yield('site_footer')
