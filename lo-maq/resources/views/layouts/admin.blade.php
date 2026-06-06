@@ -82,9 +82,6 @@
 
                 <div class="d-flex align-items-center gap-3">
                     @auth
-                        <span class="text-white-50 small d-none d-lg-inline">
-                            <i class="bi bi-person-badge me-1"></i>{{ auth()->user()->name }}
-                        </span>
                         <ul class="navbar-nav flex-row gap-1">
                             <li class="nav-item">
                                 <a class="nav-link @if(request()->is('minhaConta')) active @endif"

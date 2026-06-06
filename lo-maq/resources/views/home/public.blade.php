@@ -25,7 +25,7 @@
                     Encontre os melhores equipamentos para o seu trabalho com praticidade e economia.
                 </p>
                 <div class="d-flex flex-wrap gap-3">
-                    <a href="{{ route('anuncios.index') }}" class="btn btn-lomaq-primary btn-lg">
+                    <a href="{{ auth()->check() ? route('anuncios.index') : route('login') }}" class="btn btn-lomaq-primary btn-lg">
                         <i class="bi bi-search me-1"></i> Ver equipamentos
                     </a>
                     <a href="#como-funciona" class="btn btn-lomaq-outline btn-lg">
@@ -36,35 +36,7 @@
         </div>
     </section>
 
-    <div class="container home-search px-3 px-md-0">
-        <div class="home-search__card">
-            <form action="{{ route('anuncios.index') }}" method="GET">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                        <label for="categoria" class="form-label fw-semibold small text-muted mb-1">Categoria</label>
-                        <select class="form-select" id="categoria" name="categoria">
-                            <option value="">Todas as categorias</option>
-                            @foreach($categorias as $categoria)
-                                <option value="{{ $categoria->id }}">{{ $categoria->titulo }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-5">
-                        <label for="termo" class="form-label fw-semibold small text-muted mb-1">Localização ou nome</label>
-                        <input type="text" class="form-control" id="termo" name="termo"
-                            placeholder="Ex.: região ou equipamento">
-                    </div>
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-lomaq-primary w-100">
-                            <i class="bi bi-search me-1"></i> Buscar
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <section class="home-stats py-4 mt-4">
+    <section class="home-stats py-4">
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
@@ -172,7 +144,7 @@
                     <i class="bi bi-leaf me-2"></i>
                     Pronto para aumentar sua produtividade? Alugue os melhores equipamentos e foque no que realmente importa: o seu trabalho.
                 </p>
-                <a href="{{ route('anuncios.index') }}" class="btn btn-lomaq-primary btn-lg text-nowrap">
+                <a href="{{ auth()->check() ? route('anuncios.index') : route('login') }}" class="btn btn-lomaq-primary btn-lg text-nowrap">
                     Ver equipamentos <i class="bi bi-chevron-right ms-1"></i>
                 </a>
             </div>

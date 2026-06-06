@@ -101,7 +101,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link @if(request()->routeIs('anuncios.index')) active @endif"
-                                href="{{ route('anuncios.index') }}">Equipamentos</a>
+                                href="{{ auth()->check() ? route('anuncios.index') : route('login') }}">Equipamentos</a>
                         </li>
                         @if(request()->routeIs('home-cli-public'))
                             <li class="nav-item">
