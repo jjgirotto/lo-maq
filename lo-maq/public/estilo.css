@@ -7,9 +7,23 @@
     --lomaq-muted: #6c757d;
 }
 
-body {
+html {
+    height: 100%;
+}
+
+body,
+.site-body {
+    min-height: 100vh;
     color: var(--lomaq-text);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.site-main {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .site-bg {
@@ -256,11 +270,94 @@ body {
     margin-bottom: 0;
 }
 
+.auth-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-hero {
+    background-color: var(--lomaq-green-dark);
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    min-height: 240px;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 3.5rem;
+}
+
+.auth-hero__content {
+    max-width: 480px;
+}
+
+.auth-hero__title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+}
+
+.auth-hero__lead {
+    font-size: 1rem;
+    opacity: 0.95;
+    margin-bottom: 0;
+}
+
+.auth-form-wrap {
+    margin-top: -2.75rem;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    padding-bottom: 3rem;
+}
+
+.auth-card {
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.12);
+    padding: 2rem 2.25rem;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.auth-card--wide {
+    max-width: 460px;
+}
+
+.auth-card .input-group-text {
+    background: var(--lomaq-sage);
+    border-color: #dee2e6;
+    color: var(--lomaq-green);
+}
+
+.auth-card .form-control:focus {
+    border-color: var(--lomaq-green);
+    box-shadow: 0 0 0 0.2rem rgba(45, 90, 39, 0.15);
+}
+
+.auth-card__footer {
+    color: var(--lomaq-muted);
+    font-size: 0.95rem;
+}
+
+.auth-card__footer a {
+    color: var(--lomaq-green);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-card__footer a:hover {
+    color: var(--lomaq-green-dark);
+    text-decoration: underline;
+}
+
 .site-footer {
+    flex-shrink: 0;
     background: #fff;
     border-top: 1px solid #e9ecef;
     padding: 3rem 0 1.5rem;
-    margin-top: 2rem;
+    margin-top: auto;
 }
 
 .site-footer__brand {
@@ -297,6 +394,19 @@ body {
 }
 
 @media (max-width: 767.98px) {
+    .auth-hero {
+        min-height: 200px;
+        padding-bottom: 3rem;
+    }
+
+    .auth-form-wrap {
+        margin-top: -2.25rem;
+    }
+
+    .auth-card {
+        padding: 1.5rem 1.25rem;
+    }
+
     .home-hero {
         min-height: 420px;
     }
