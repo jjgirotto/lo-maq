@@ -78,3 +78,17 @@ php artisan migrate:rollback
 # Ver status de migrations
 php artisan migrate:status
 ```
+
+## Usuários
+
+### administrador
+```bash
+admin@lomaq.com
+123456
+```
+
+### usuario comum
+```bash
+joao@email.com
+123456
+```
