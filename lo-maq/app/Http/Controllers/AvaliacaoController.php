@@ -2,67 +2,93 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LocatarioDaLocacao;
 use Illuminate\Http\Request;
-use App\Models\Avaliacao;
-use App\Models\Locacao;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\Locacao;
+use App\Models\Avaliacao;
+use App\Models\Equipamento;
 class AvaliacaoController extends Controller
-{    
-    public function index()
+{
+    public function Create($id)
     {
-        $avaliacoes = Avaliacao::with(['locacao', 'usuario'])->get();
-        
-        return view('adm.avaliacoes.index', compact('avaliacoes'));
-    }
-
-    public function show($id)
-    {
-        $avaliacao = Avaliacao::with(['locacao.equipamento', 'usuario'])->findOrFail($id);
-        
-        return view('adm.avaliacoes.show', compact('avaliacao'));
-    }
-
-    public function destroy($id)
-    {
-        $avaliacao = Avaliacao::findOrFail($id);
-        $avaliacao->delete();
-        
-        return redirect()->route('adm.avaliacoes.index')
-                         ->with('sucesso', 'Avaliação removida com sucesso!');
-    }
-
-    public function createClient($id)
-    {
-        $locacao = Locacao::findOrFail($id);
-        
-        if (Auth::user()->id !== $locacao->usuario_id) {
-            return redirect()->route('locacoes.index')
-                             ->with('erro', 'Acesso negado. Você não tem permissão para avaliar esta locação.');
+        if (!Avaliacao::where('locacao_id', $id)->exists()) {
+            $locacao = Locacao::findOrFail($id);
+            $equipamento = Equipamento::findOrFail($locacao->equipamento_id);
+            return view("locacoes.avaliacoes.create", compact('locacao', 'equipamento'));
         }
-
-        return view('locacoes.avaliacoes.create', compact('locacao'));
+        return redirect()->route('locacoes.avaliar.edit', $id);
     }
 
-    public function storeClient(Request $request, $id)
+    public function Store(Request $request)
     {
-        $request->validate([
-            'nota'                 => 'required|integer|min:1|max:5',
-            'estado_equipamento'   => 'nullable|string|max:255',
-            'cumprimento_contrato' => 'nullable|string|max:255',
-            'comentario'           => 'nullable|string|max:1000',
-        ]);
+        try {
+            $data = array_merge(
+                $request->all(),
+                [
+                    'locacao_id' => $request->id,
+                    // Salva a avaliação diretamente para o usuário logado:
+                    'usuario_id' => Auth::user()->id, 
+                ]
+            );
+            
+            $avaliacao = Avaliacao::create($data);
+            
+            return redirect()->route("locacoes.index")
+                ->with("sucesso", "Registro inserido com sucesso!");
+        } catch (\Exception $e) {
+            Log::error("Erro ao salvar o registro da avaliacao! " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            return redirect()->route("locacoes.index")
+                ->with("erro", "Erro ao inserir! " . $e->getMessage());
+        }
+    }
 
-        Avaliacao::create([
-            'nota'                 => $request->nota,
-            'estado_equipamento'   => $request->estado_equipamento,
-            'cumprimento_contrato' => $request->cumprimento_contrato,
-            'comentario'           => $request->comentario,
-            'locacao_id'           => $id,
-            'usuario_id'           => Auth::id(),
-        ]);
+    public function Edit(string $id)
+    {
+        $avaliacao = Avaliacao::where('locacao_id', $id)->firstOrFail();
+        $locacao = Locacao::findOrFail($id);
+        $equipamento = Equipamento::findOrFail($locacao->equipamento_id);
+        return view("locacoes.avaliacoes.show", compact("avaliacao", 'equipamento'));
+    }
 
-        return redirect()->route('locacoes.index')
-                         ->with('sucesso', 'Obrigado! Sua avaliação foi enviada com sucesso.');
+    public function Update(Request $request)
+    {
+        //
+        try {
+            $avaliacao = Avaliacao::findOrFail($request->id);
+            $avaliacao->update($request->all());
+
+            return redirect()->route("locacoes.index")
+                ->with("sucesso", "Registro alterado!");
+        } catch (\Exception $e) {
+            Log::error("Erro ao alterar o registro da avaliacao! " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+            return redirect()->route("locacoes.index")
+                ->with("erro", "Erro ao alterar!");
+        }
+    }
+
+
+    public function Destroy(string $id)
+    {
+        try {
+            $avaliacao = Avaliacao::findOrFail($id);
+            $avaliacao->delete();
+            return redirect()->route("locacoes.index")
+                ->with("sucesso", "Registro excluído!");
+        } catch (\Exception $e) {
+            Log::error("Erro ao excluir o registro da avaliacao! " . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'id' => $id
+            ]);
+            return redirect()->route("locacoes.index")
+                ->with("erro", "Erro ao excluir!");
+        }
     }
 }
