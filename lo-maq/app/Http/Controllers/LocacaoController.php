@@ -68,7 +68,7 @@ class LocacaoController extends Controller
                     'data_fim' => $dataComplete['data_fim'],
                     'valor_individual' => $dataComplete['valor_total'],
                     'locacao_id' => $locacao->id,
-                    'locatario_id' => $dataComplete['created_by'],
+                    'usuario_id' => $dataComplete['created_by'],
                 ]
             );
 
@@ -98,7 +98,8 @@ class LocacaoController extends Controller
     public function createLocatarioDaLocacao(string $id)
     {
         $locacao = Locacao::findOrFail($id);
-        $locadoresExistentes = LocatarioDaLocacao::where('locacao_id', $id)->pluck('locatario_id');
+        // Alterado de locatario_id para usuario_id
+        $locadoresExistentes = LocatarioDaLocacao::where('locacao_id', $id)->pluck('usuario_id'); 
         $locadores = User::where('access', '!=', 'ADM')->whereNotIn('id', $locadoresExistentes)->get();
         return view("locacoes.addColab", compact('locacao', 'locadores', 'id'));
     }
@@ -110,7 +111,7 @@ class LocacaoController extends Controller
                 'data_inicio' => $request['data_inicio'],
                 'data_fim' => $request['data_fim'],
                 'locacao_id' => $request['locacao_id'],
-                'locatario_id' => $request['id_colab'],
+                'usuario_id' => $request['id_colab'], // <-- Alterado de locatario_id para usuario_id
             ]
         );
         $colabList = LocatarioDaLocacao::where('locacao_id', $request['locacao_id'])->get();
