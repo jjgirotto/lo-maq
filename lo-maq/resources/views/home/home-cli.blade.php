@@ -10,10 +10,8 @@
     <div class="container mt-5">
         <div class="row g-4">
 
-
-            <!-- Card Categorias -->
             <div class="col-lg-3 col-md-6 col-sm-12">
-                <a href="/buscar" class="btn btn-primary btn-sm w-100">
+                <a href="{{ route('anuncios.index') }}" class="btn btn-primary btn-sm w-100">
                     <div class="card-body shadow-sm border-0 rounded-3">
                         <div class="card-body p-3 text-center">
                             <h5 class="card-title fw-semibold mb-3">Buscar</h5>
@@ -23,40 +21,34 @@
                 </a>
             </div>
 
-            <!-- Card Equipamentos -->
             <div class="col-lg-3 col-md-6 col-sm-12">
-                <a href="/anunciar" class="btn btn-primary btn-sm w-100">
+                <a href="{{ route('anunciar') }}" class="btn btn-primary btn-sm w-100">
                     <div class="card-body shadow-sm border-0 rounded-3">
                         <div class="card-body p-3 text-center">
                             <h5 class="card-title fw-semibold mb-3">Anunciar</h5>
                             <p class="card-text text-muted">Anuncie seus equipamentos.</p>
-
                         </div>
                     </div>
                 </a>
             </div>
 
-            <!-- Card Locadores -->
             <div class="col-lg-3 col-md-6 col-sm-12">
                 <a href="{{ route('locacoes.index') }}" class="btn btn-primary btn-sm w-100">
                     <div class="card-body shadow-sm border-0 rounded-3">
                         <div class="card-body p-3 text-center">
-                            <h5 class="card-title fw-semibold mb-3">Minhas Locacoes</h5>
-                            <p class="card-text text-muted">Consulte suas locacoes</p>
-
+                            <h5 class="card-title fw-semibold mb-3">Minhas Locações</h5>
+                            <p class="card-text text-muted">Consulte suas locações</p>
                         </div>
                     </div>
                 </a>
             </div>
 
-            <!-- Card Locatários -->
             <div class="col-lg-3 col-md-6 col-sm-12">
-                <a href="#" class="btn btn-primary btn-sm w-100">
+                <a href="{{ route('anuncios.meus') }}" class="btn btn-primary btn-sm w-100">
                     <div class="card-body shadow-sm border-0 rounded-3">
                         <div class="card-body p-3 text-center">
-                            <h5 class="card-title fw-semibold mb-3">Meus Anuncios</h5>
-                            <p class="card-text text-muted">Visualize e Edite seus anuncios</p>
-
+                            <h5 class="card-title fw-semibold mb-3">Meus Anúncios</h5>
+                            <p class="card-text text-muted">Visualize e Edite seus anúncios</p>
                         </div>
                     </div>
                 </a>
