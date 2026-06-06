@@ -9,6 +9,7 @@
 
 html {
     height: 100%;
+    overflow-x: clip;
 }
 
 body,
@@ -66,13 +67,8 @@ body,
 }
 
 .home-full-bleed {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    margin-top: 0;
+    width: 100%;
+    max-width: 100%;
 }
 
 .home-hero {
@@ -352,6 +348,112 @@ body,
     text-decoration: underline;
 }
 
+.panel-page {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 3rem;
+}
+
+.panel-hero {
+    background-color: var(--lomaq-green-dark);
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+}
+
+.panel-hero__content {
+    max-width: 640px;
+}
+
+.panel-hero__eyebrow {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.panel-hero__title {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+}
+
+.panel-hero__lead {
+    font-size: 1.05rem;
+    opacity: 0.95;
+    margin-bottom: 0;
+}
+
+.panel-grid-wrap {
+    margin-top: -2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.panel-action-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.1);
+    padding: 1.75rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.panel-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 2.5rem rgba(45, 90, 39, 0.15);
+    color: inherit;
+}
+
+.panel-action-card__icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    background: var(--lomaq-green-light);
+    color: var(--lomaq-green);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    margin-bottom: 1rem;
+}
+
+.panel-action-card__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--lomaq-green-dark);
+    margin-bottom: 0.5rem;
+}
+
+.panel-action-card__text {
+    color: var(--lomaq-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.25rem;
+    flex: 1;
+}
+
+.panel-action-card__cta {
+    color: var(--lomaq-green);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.panel-action-card:hover .panel-action-card__cta {
+    color: var(--lomaq-green-dark);
+}
+
+.site-footer--compact {
+    padding: 1.25rem 0;
+}
+
 .site-footer {
     flex-shrink: 0;
     background: #fff;
@@ -394,6 +496,14 @@ body,
 }
 
 @media (max-width: 767.98px) {
+    .panel-hero {
+        min-height: 180px;
+    }
+
+    .panel-grid-wrap {
+        margin-top: -1.5rem;
+    }
+
     .auth-hero {
         min-height: 200px;
         padding-bottom: 3rem;
