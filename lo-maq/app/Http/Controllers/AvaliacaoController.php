@@ -13,8 +13,14 @@ class AvaliacaoController extends Controller
 {
     public function Create($id)
     {
+        $locacao = Locacao::findOrFail($id);
+
+        if (!Locacao::statusPagamentoAtivo($locacao->status_pagamento)) {
+            return redirect()->route('locacoes.index')
+                ->with('erro', 'A avaliação só está disponível após a confirmação do pagamento.');
+        }
+
         if (!Avaliacao::where('locacao_id', $id)->exists()) {
-            $locacao = Locacao::findOrFail($id);
             $equipamento = Equipamento::findOrFail($locacao->equipamento_id);
             return view("locacoes.avaliacoes.create", compact('locacao', 'equipamento'));
         }
@@ -24,6 +30,13 @@ class AvaliacaoController extends Controller
     public function Store(Request $request)
     {
         try {
+            $locacao = Locacao::findOrFail($request->id);
+
+            if (!Locacao::statusPagamentoAtivo($locacao->status_pagamento)) {
+                return redirect()->route('locacoes.index')
+                    ->with('erro', 'A avaliação só está disponível após a confirmação do pagamento.');
+            }
+
             $data = array_merge(
                 $request->all(),
                 [

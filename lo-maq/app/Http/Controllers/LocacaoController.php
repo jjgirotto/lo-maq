@@ -8,31 +8,45 @@ use App\Models\Equipamento;
 use App\Models\Locacao;
 use App\Models\LocatarioDaLocacao;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-
 class LocacaoController extends Controller
 {
     
     public function index()
     {
-        //
         $locador = Auth::user();
-        $locacoes = Locacao::where('created_by', $locador->id)->get();
-        $equipamentoIds = $locacoes->pluck('equipamento_id');
-        $equipamentos = Equipamento::whereIn('id', $equipamentoIds)->get();
-        $locatariosDasLocacoes = LocatarioDaLocacao::all();
-        return view("locacoes.index", compact("locador", 'locacoes', 'equipamentos', 'locatariosDasLocacoes'));
+        $locacoes = Locacao::with('equipamento')
+            ->where('created_by', $locador->id)
+            ->get();
+
+        return view("locacoes.index", compact('locacoes'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-{
-    $equipamentos = Equipamento::all();
+    public function create(Request $request)
+    {
+        $equipamentos = Equipamento::orderBy('nome')->get();
+        $equipamentoSelecionado = $request->query('equipamento_id');
 
-    return view("locacoes.create", compact('equipamentos'));
-}
+        if (!$equipamentoSelecionado) {
+            $queryString = rtrim($request->getQueryString() ?? '', '=');
+            if ($queryString !== '' && ctype_digit($queryString)) {
+                $equipamentoSelecionado = (int) $queryString;
+            }
+        }
+
+        if (!$equipamentoSelecionado) {
+            foreach (array_keys($request->query()) as $key) {
+                if (is_numeric($key)) {
+                    $equipamentoSelecionado = (int) $key;
+                    break;
+                }
+            }
+        }
+
+        return view("locacoes.create", compact('equipamentos', 'equipamentoSelecionado'));
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -43,7 +57,6 @@ class LocacaoController extends Controller
             $data = $request->validate([
                 'data_inicio' => ['required', 'date'],
                 'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
-                'tipo_locacao' => ['required', 'boolean'],
             ]);
 
             $startDate = Carbon::createFromFormat("Y-m-d", $data['data_inicio'])->startOfDay();
@@ -52,12 +65,15 @@ class LocacaoController extends Controller
             $equipamentoSafe =
     Equipamento::findOrFail($request->equipamento_id);
             $valorTotal = $equipamentoSafe->preco_periodo * $days;
+            $usuarioId = $request->input('usuario_id', Auth::user()->id);
             $dataComplete = array_merge(
                 $data,
                 [
                     'equipamento_id' => $equipamentoSafe->id,
                     'valor_total' => $valorTotal,
+                    'usuario_id' => $usuarioId,
                     'created_by' => Auth::user()->id,
+                    'status_pagamento' => '0',
                 ]
             );
             $locacao = Locacao::create($dataComplete);
@@ -68,7 +84,7 @@ class LocacaoController extends Controller
                     'data_fim' => $dataComplete['data_fim'],
                     'valor_individual' => $dataComplete['valor_total'],
                     'locacao_id' => $locacao->id,
-                    'usuario_id' => $dataComplete['created_by'],
+                    'usuario_id' => $usuarioId,
                 ]
             );
 
@@ -92,37 +108,6 @@ class LocacaoController extends Controller
             return view("locacoes.show", compact("locador", 'locacao', 'equipamento'));
         }
         return view("locacoes.index");
-    }
-
-
-    public function createLocatarioDaLocacao(string $id)
-    {
-        $locacao = Locacao::findOrFail($id);
-        // Alterado de locatario_id para usuario_id
-        $locadoresExistentes = LocatarioDaLocacao::where('locacao_id', $id)->pluck('usuario_id'); 
-        $locadores = User::where('access', '!=', 'ADM')->whereNotIn('id', $locadoresExistentes)->get();
-        return view("locacoes.addColab", compact('locacao', 'locadores', 'id'));
-    }
-
-    public function storeLocatarioDaLocacao(Request $request)
-    {
-        LocatarioDaLocacao::create(
-            [
-                'data_inicio' => $request['data_inicio'],
-                'data_fim' => $request['data_fim'],
-                'locacao_id' => $request['locacao_id'],
-                'usuario_id' => $request['id_colab'], // <-- Alterado de locatario_id para usuario_id
-            ]
-        );
-        $colabList = LocatarioDaLocacao::where('locacao_id', $request['locacao_id'])->get();
-        $divideBy = $colabList->count();
-        if ($divideBy > 0) {
-
-            $totalValue = Locacao::findOrFail($request['locacao_id'])->valor_total;
-            $valorIndividual = $totalValue / $divideBy;
-            LocatarioDaLocacao::where('locacao_id', $request['locacao_id'])->update(['valor_individual' => $valorIndividual]);
-        }
-        return back()->with('sucesso', 'Participante adicionado e valor dividido com sucesso!');
     }
 
     /**

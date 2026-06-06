@@ -2,65 +2,124 @@
 
 @section('conteudo')
 
-    <h1>Dados da Locacao</h1>
-    <form method="post" action="{{ route('adm.locacao.show', $locacao->id) }}">
-        @CSRF
-        @METHOD('DELETE')
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Consulta de Locação</h1>
+        <div class="d-flex gap-2">
+            <a href="{{ route('adm.locacao.list') }}" class="btn btn-secondary">Voltar</a>
+            <a href="{{ route('adm.locacao.ViewEdit', $locacao->id) }}" class="btn btn-warning">Editar</a>
+        </div>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->nome }}</label>
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Equipamento</strong>
         </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->marca }}</label>
+        <div class="card-body">
+            <div class="row g-3">
+                @if($equipamento->image_path)
+                    <div class="col-12">
+                        <label class="form-label">Imagem</label>
+                        <div>
+                            <img src="{{ asset('storage/' . $equipamento->image_path) }}"
+                                alt="{{ $equipamento->nome }}"
+                                class="img-thumbnail"
+                                style="max-height: 200px;">
+                        </div>
+                    </div>
+                @endif
+                <div class="col-md-6">
+                    <label class="form-label">Nome</label>
+                    <input type="text" class="form-control" value="{{ $equipamento->nome }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Marca</label>
+                    <input type="text" class="form-control" value="{{ $equipamento->marca }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Modelo</label>
+                    <input type="text" class="form-control" value="{{ $equipamento->modelo }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ano</label>
+                    <input type="text" class="form-control" value="{{ $equipamento->ano }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Capacidade</label>
+                    <input type="text" class="form-control" value="{{ $equipamento->capacidade }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Preço por período</label>
+                    <input type="text" class="form-control"
+                        value="R$ {{ number_format($equipamento->preco_periodo, 2, ',', '.') }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Operador certificado</label>
+                    <input type="text" class="form-control"
+                        value="{{ $equipamento->exige_operador_certificado ? 'Sim' : 'Não' }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Seguro obrigatório</label>
+                    <input type="text" class="form-control"
+                        value="{{ $equipamento->seguro_obrigatorio ? 'Sim' : 'Não' }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Caução obrigatória</label>
+                    <input type="text" class="form-control"
+                        value="{{ $equipamento->caucao_obrigatoria ? 'Sim' : 'Não' }}" readonly>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->modelo }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->image_path }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->ano }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->capacidade }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->preco_periodo }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->exige_operador_certificado }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->seguro_obrigatorio }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $equipamento->caucao_obrigatoria }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ \Carbon\Carbon::parse($locacao->data_inicio)->format('d/m/Y') }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ \Carbon\Carbon::parse($locacao->data_fim)->format('d/m/Y') }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $locacao->status_equipamento }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $locacao->tipo_locacao }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $locacao->valor_total }}</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">{{ $locacao->status_pagamento }}</label>
-        </div>
+    </div>
 
-        <p>Deseja excluir esse registro?</p>
-        <button type="submit" class="btn btn-danger">Sim</button>
-        <a href="#" class="btn btn-secondary" onClick="history.back()">
-            Não
-        </a>
-    </form>
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Dados da locação</strong>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Locador</label>
+                    <input type="text" class="form-control"
+                        value="{{ $locacao->locador->name ?? '—' }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Locatário</label>
+                    <input type="text" class="form-control"
+                        value="{{ $locacao->usuario->name ?? '—' }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Data de início</label>
+                    <input type="text" class="form-control"
+                        value="{{ \Carbon\Carbon::parse($locacao->data_inicio)->format('d/m/Y') }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Data de fim</label>
+                    <input type="text" class="form-control"
+                        value="{{ \Carbon\Carbon::parse($locacao->data_fim)->format('d/m/Y') }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Valor total</label>
+                    <input type="text" class="form-control"
+                        value="R$ {{ number_format($locacao->valor_total, 2, ',', '.') }}" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Pagamento realizado</label>
+                    <input type="text" class="form-control" value="{{ $locacao->statusPagamentoLabel() }}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-danger">
+        <div class="card-body">
+            <p class="mb-3">Deseja excluir esse registro?</p>
+            <form method="post" action="{{ route('adm.locacao.show', $locacao->id) }}" class="d-flex gap-2">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Sim, excluir</button>
+                <a href="{{ route('adm.locacao.list') }}" class="btn btn-secondary">Não</a>
+            </form>
+        </div>
+    </div>
 
 @endsection

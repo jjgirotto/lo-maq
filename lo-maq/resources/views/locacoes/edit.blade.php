@@ -1,108 +1,110 @@
-@extends('layouts.default')
+@extends($layout)
 
 @section('conteudo')
-<h3>Editar Locação #{{ $locacao->id }}</h3>
 
-@if($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach($errors->all() as $e)
-                <li>{{ $e }}</li>
-            @endforeach
-        </ul>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Editar Locação</h1>
+        <a href="{{ route('locacoes.index') }}" class="btn btn-secondary">Voltar</a>
     </div>
-@endif
 
-<form method="POST" action="{{ route('locacoes.update', $locacao->id) }}">
-    @csrf
-    @method('PUT')
-
-    @if(auth()->user()->access === 'ADM')
-        <div class="mb-3">
-            <label class="form-label">Usuário</label>
-            <select name="usuario_id" class="form-select">
-                @foreach($users as $u)
-                    <option value="{{ $u->id }}" @if($u->id == $locacao->usuario_id) selected @endif>{{ $u->name }}</option>
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $e)
+                    <li>{{ $e }}</li>
                 @endforeach
-            </select>
-        </div>
-    @else
-        <input type="hidden" name="usuario_id" value="{{ auth()->id() }}">
-        <div class="mb-3">
-            <label class="form-label">Locatário</label>
-            <input type="text" class="form-control" value="{{ auth()->user()->name }}" disabled>
+            </ul>
         </div>
     @endif
 
-    <div class="mb-3">
-        <label class="form-label">Equipamento</label>
-        <select name="equipamento_id" class="form-select" required>
-            @foreach($equipamentos as $eq)
-                <option value="{{ $eq->id }}" data-preco="{{ $eq->preco_periodo }}" @if($eq->id == $locacao->equipamento_id) selected @endif>{{ $eq->nome ?? $eq->id }}</option>
-            @endforeach
-        </select>
-    </div>
+    <form method="post" action="{{ route('locacoes.update', $locacao->id) }}">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="usuario_id" value="{{ auth()->id() }}">
 
-    <div class="row">
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Data Início</label>
-            <input type="date" name="data_inicio" class="form-control" value="{{ $locacao->data_inicio }}" required>
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Equipamento</strong>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="equipamento_id" class="form-label">Equipamento</label>
+                        <select name="equipamento_id" id="equipamento_id" class="form-select" required>
+                            @foreach($equipamentos as $eq)
+                                <option value="{{ $eq->id }}" data-preco="{{ $eq->preco_periodo }}"
+                                    @selected($eq->id == $locacao->equipamento_id)>
+                                    {{ $eq->nome }} — {{ $eq->marca }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6 mb-3">
-            <label class="form-label">Data Fim</label>
-            <input type="date" name="data_fim" class="form-control" value="{{ $locacao->data_fim }}" required>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Dados da locação</strong>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="data_inicio" class="form-label">Data de início</label>
+                        <input type="date" id="data_inicio" name="data_inicio" class="form-control"
+                            value="{{ \Carbon\Carbon::parse($locacao->data_inicio)->format('Y-m-d') }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="data_fim" class="form-label">Data de fim</label>
+                        <input type="date" id="data_fim" name="data_fim" class="form-control"
+                            value="{{ \Carbon\Carbon::parse($locacao->data_fim)->format('Y-m-d') }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Valor total</label>
+                        <input type="text" id="valor_total" class="form-control"
+                            value="R$ {{ number_format($locacao->valor_total, 2, ',', '.') }}" readonly>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="mb-3">
-        <label class="form-label">Valor Total</label>
-        <input type="text" id="valor_total" name="valor_total" class="form-control" value="{{ $locacao->valor_total }}" readonly>
-    </div>
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{{ route('locacoes.index') }}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
 
-    <button class="btn btn-primary">Atualizar</button>
-    <a href="{{ route('locacoes.index') }}" class="btn btn-secondary">Cancelar</a>
-</form>
+    <script>
+        const precoMap = {};
+        document.querySelectorAll('#equipamento_id option').forEach(option => {
+            precoMap[option.value] = parseFloat(option.dataset.preco) || 0;
+        });
 
-<script>
-    const dataInicioEl = document.querySelector('input[name="data_inicio"]');
-    const dataFimEl = document.querySelector('input[name="data_fim"]');
-    const equipamentoEl = document.querySelector('select[name="equipamento_id"]');
-    const valorTotalEl = document.querySelector('#valor_total');
-    const precoMap = {};
+        function calcularTotal() {
+            const inicio = document.getElementById('data_inicio').value;
+            const fim = document.getElementById('data_fim').value;
+            const equipamentoId = document.getElementById('equipamento_id').value;
+            const valorDia = precoMap[equipamentoId] || 0;
+            const totalInput = document.getElementById('valor_total');
 
-    document.querySelectorAll('select[name="equipamento_id"] option').forEach(option => {
-        precoMap[option.value] = parseFloat(option.dataset.preco) || 0;
-    });
+            if (inicio && fim && valorDia) {
+                const dataInicio = new Date(inicio);
+                const dataFim = new Date(fim);
+                const diffTime = dataFim - dataInicio;
+                const diffDias = diffTime / (1000 * 60 * 60 * 24);
 
-    function calcularValorTotal() {
-        const inicio = dataInicioEl.value;
-        const fim = dataFimEl.value;
-        const equipamentoId = equipamentoEl.value;
-        const preco = precoMap[equipamentoId] || 0;
-
-        if (!inicio || !fim || !preco) {
-            valorTotalEl.value = '';
-            return;
+                if (diffDias >= 0) {
+                    const total = (diffDias + 1) * valorDia;
+                    totalInput.value = 'R$ ' + total.toFixed(2).replace('.', ',');
+                } else {
+                    totalInput.value = 'R$ 0,00';
+                }
+            }
         }
 
-        const dtInicio = new Date(inicio);
-        const dtFim = new Date(fim);
-        if (dtFim < dtInicio) {
-            valorTotalEl.value = '';
-            return;
-        }
-
-        const dias = Math.floor((dtFim - dtInicio) / (1000 * 60 * 60 * 24)) + 1;
-        valorTotalEl.value = (dias * preco).toFixed(2);
-    }
-
-    [dataInicioEl, dataFimEl, equipamentoEl].forEach(el => {
-        if (el) {
-            el.addEventListener('change', calcularValorTotal);
-        }
-    });
-
-    window.addEventListener('load', calcularValorTotal);
-</script>
+        document.getElementById('equipamento_id').addEventListener('change', calcularTotal);
+        document.getElementById('data_inicio').addEventListener('change', calcularTotal);
+        document.getElementById('data_fim').addEventListener('change', calcularTotal);
+    </script>
 
 @endsection
