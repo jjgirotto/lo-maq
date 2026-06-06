@@ -6,24 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Avaliacao extends Model
 {
-    protected $table = 'avaliacoes';
+    protected $table = "avaliacoes";
+    public $incrementing = true;
 
-    protected $fillable = [
-        'nota', 
-        'comentario', 
-        'estado_equipamento', 
-        'cumprimento_contrato', 
-        'locacao_id', 
-        'usuario_id'
-    ];
+    // Campos atualizados para usar usuario_id
+    protected $fillable = ['nota', 'comentario', 'estado_equipamento', 'cumprimento_contrato', 'locacao_id', 'usuario_id'];
 
     public function locacao()
     {
-        return $this->belongsTo(Locacao::class, 'locacao_id', 'id');
+        return $this->belongsTo(Locacao::class, "locacao_id", "id");
     }
-
+    
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'usuario_id', 'id');
+        // Relacionamento aponta para usuario_id
+        return $this->belongsTo(User::class, "usuario_id", "id");
     }
 }
