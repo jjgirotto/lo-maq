@@ -8,13 +8,17 @@
         <div class="card-body">
             <h3 class="card-title">{{ $anuncio->nome }}</h3>
 
+            <p>
+                <img src="{{ asset('storage/' . $anuncio->equipamento->image_path) }}" class="card-img-top"
+                    alt="Foto de {{ $anuncio->equipamento->nome }}" style="height: 500px; width: 500px; object-fit: cover;">
+            </p>
             <p><strong>Equipamento:</strong>
                 {{ $anuncio->equipamento->nome }} -
                 {{ $anuncio->equipamento->marca }} {{ $anuncio->equipamento->modelo }} ({{ $anuncio->equipamento->ano }})
             </p>
 
             <p><strong>Categoria:</strong>
-                {{ $anuncio->equipamento->categoria->nome ?? 'Não informada' }}
+                {{ $anuncio->equipamento->categoria->titulo ?? 'Não informada' }}
             </p>
 
             <p><strong>Valor da Diária:</strong>
@@ -25,9 +29,11 @@
                 {{ $anuncio->regiao }}
             </p>
 
-            <p><strong>Locador:</strong>
-                {{ $anuncio->equipamento->locador->nome ?? 'Não informado' }}
-            </p>
+            <!--
+                <p><strong>Locador:</strong>
+                    {{ $anuncio->equipamento->locador->nome ?? 'Não informado' }}
+                </p>
+                -->
 
             <p><strong>Criado em:</strong>
                 {{ $anuncio->created_at->format('d/m/Y H:i') }}
