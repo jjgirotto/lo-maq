@@ -18,7 +18,7 @@
                 <th>Nome</th>
                 <th>Preço</th>
                 <th>Região</th>
-                <th>Locador</th>
+                <!-- <th>Locador</th> -->
                 <th>Operador Cert.</th>
                 <th>Seguro</th>
                 <th>Caução</th>
@@ -41,6 +41,7 @@
                     
                     <td>{{ $e->preco_periodo }}</td>
                     <td>{{ $e->regiao }}</td>
+<!--
                     <td>
                         @foreach ($locador as $l)
                             @if ($e->locador_id == $l->id)
@@ -48,6 +49,7 @@
                             @endif
                         @endforeach
                     </td>
+-->
                     <td class="text-center">
                         @if($e->exige_operador_certificado == 0)
                             <img src="{{ asset('images/xmark.svg') }}" width="20rem">
