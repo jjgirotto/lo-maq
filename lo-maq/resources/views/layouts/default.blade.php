@@ -80,6 +80,12 @@
                                     <i class="bi bi-collection me-1"></i> Meus anúncios
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link @if(request()->routeIs('equipamentos')) active @endif"
+                                    href="/equipamentos">
+                                    <i class="bi bi-tools me-1"></i> Meus equipamentos
+                                </a>
+                            </li>
                         </ul>
                     @else
                         <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
