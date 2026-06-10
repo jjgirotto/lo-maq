@@ -14,7 +14,7 @@
             </p>
 
             <p><strong>Categoria:</strong>
-                {{ $anuncio->equipamento->categoria->titulo ?? 'Não informada' }}
+                {{ $anuncio->equipamento->categoria->nome ?? 'Não informada' }}
             </p>
 
             <p><strong>Valor da Diária:</strong>
