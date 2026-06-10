@@ -16,6 +16,7 @@ use App\Http\Middleware\NivelCliMiddleware;
 
 // --- 1. ROTAS PÚBLICAS ---
 Route::get('/', [HomeController::class, 'indexPublic'])->name('home-cli-public');
+Route::resource('/equipamentos', EquipamentoController::class);
 Route::resource('/categorias', CategoriaController::class);
 
 // Login e Registo (Pasta 'auth')
@@ -80,9 +81,6 @@ Route::middleware("auth")->group(function () {
         Route::get('/locacoes/show/{id}', [LocacaoController::class, 'show'])->name('locacoes.show');
         Route::get('/locacoes/create', [LocacaoController::class, 'create'])->name('locacoes.create');
         Route::post('/locacoes', [LocacaoController::class, 'store'])->name('locacoes.store');
-
-        // Equipamentos Cliente
-        Route::resource('/equipamentos', EquipamentoController::class);
 
         // Avaliações Cliente
         Route::get('/locacoes/avaliar/{id}', [AvaliacaoController::class, 'Create'])->name('locacoes.avaliar');
